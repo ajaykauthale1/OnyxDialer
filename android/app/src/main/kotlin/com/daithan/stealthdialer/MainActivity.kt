@@ -1,5 +1,6 @@
 package com.daithan.stealthdialer
 
+import android.content.Context
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -33,12 +34,27 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, DATA_CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "syncBlockList" -> {
-                    // Implement syncBlockList
-                    result.success(null)
+                    val numbers = call.argument<List<String>>("numbers")
+                    if (numbers != null) {
+                        val prefs = getSharedPreferences("OnyxPrefs", Context.MODE_PRIVATE)
+                        prefs.edit().putStringSet("blockList", numbers.toSet()).apply()
+                        result.success(null)
+                    } else {
+                        result.error("INVALID_ARGUMENT", "Numbers list is null", null)
+                    }
                 }
                 "syncGhostSettings" -> {
-                    // Implement syncGhostSettings
-                    result.success(null)
+                    // For now, we'll just sync the ghost list if provided, or other settings
+                    // Assuming ghostList is passed as part of settings for simplicity in this phase
+                    val ghostList = call.argument<List<String>>("ghostList")
+                    if (ghostList != null) {
+                        val prefs = getSharedPreferences("OnyxPrefs", Context.MODE_PRIVATE)
+                        prefs.edit().putStringSet("ghostList", ghostList.toSet()).apply()
+                        result.success(null)
+                    } else {
+                         // Handle other settings or return success if just partial update
+                        result.success(null)
+                    }
                 }
                 else -> result.notImplemented()
             }
