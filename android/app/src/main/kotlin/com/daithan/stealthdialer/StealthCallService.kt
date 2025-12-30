@@ -1,6 +1,7 @@
 package com.daithan.stealthdialer
 
 import android.content.Context
+import android.content.Intent
 import android.database.ContentObserver
 import android.net.Uri
 import android.os.Handler
@@ -23,10 +24,13 @@ class StealthCallService : InCallService() {
         super.onCallAdded(call)
         Log.d(TAG, "onCallAdded: $call")
 
+        // Update CallManager
+        CallManager.updateCall(call)
+
         val number = call.details.handle?.schemeSpecificPart
         if (number == null) {
             Log.w(TAG, "Call handle is null, proceeding with standard routing")
-            // TODO: Launch standard UI
+            launchPublicUI("Unknown")
             return
         }
 
@@ -41,18 +45,22 @@ class StealthCallService : InCallService() {
         if (isGhost(number)) {
             Log.i(TAG, "Ghost call detected from $number")
             // TODO: Launch StealthCallActivity
+            // For now, launch Public UI but maybe with a flag?
+            launchPublicUI(number) 
             return
         }
 
         // 3. Standard Routing
         Log.i(TAG, "Standard call from $number")
-        // TODO: Launch PublicCallActivity or FloatingService
+        launchPublicUI(number)
     }
 
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
         Log.d(TAG, "onCallRemoved: $call")
         
+        CallManager.updateCall(null)
+
         // Phase 2.2: Auto-Clear Daemon
         val number = call.details.handle?.schemeSpecificPart
         if (number != null && isGhost(number)) {
@@ -64,6 +72,13 @@ class StealthCallService : InCallService() {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+    }
+
+    private fun launchPublicUI(number: String) {
+        val intent = Intent(this, PublicCallActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("number", number)
+        startActivity(intent)
     }
 
     private fun triggerAutoClear(number: String) {

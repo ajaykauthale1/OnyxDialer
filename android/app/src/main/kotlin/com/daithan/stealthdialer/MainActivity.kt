@@ -1,6 +1,11 @@
 package com.daithan.stealthdialer
 
+import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import androidx.core.app.ActivityCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -16,15 +21,20 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CALL_CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "makeCall" -> {
-                    // Implement makeCall
-                    result.success(null)
+                    val number = call.argument<String>("number")
+                    if (number != null) {
+                        makeCall(number)
+                        result.success(null)
+                    } else {
+                        result.error("INVALID_ARGUMENT", "Number is null", null)
+                    }
                 }
                 "endCall" -> {
-                    // Implement endCall
+                    CallManager.hangup()
                     result.success(null)
                 }
                 "rejectCall" -> {
-                    // Implement rejectCall
+                    CallManager.hangup()
                     result.success(null)
                 }
                 else -> result.notImplemented()
@@ -44,20 +54,27 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 "syncGhostSettings" -> {
-                    // For now, we'll just sync the ghost list if provided, or other settings
-                    // Assuming ghostList is passed as part of settings for simplicity in this phase
                     val ghostList = call.argument<List<String>>("ghostList")
                     if (ghostList != null) {
                         val prefs = getSharedPreferences("OnyxPrefs", Context.MODE_PRIVATE)
                         prefs.edit().putStringSet("ghostList", ghostList.toSet()).apply()
                         result.success(null)
                     } else {
-                         // Handle other settings or return success if just partial update
                         result.success(null)
                     }
                 }
                 else -> result.notImplemented()
             }
+        }
+    }
+
+    private fun makeCall(number: String) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            val intent = Intent(Intent.ACTION_CALL)
+            intent.data = Uri.parse("tel:$number")
+            startActivity(intent)
+        } else {
+            // Permission should be requested from Flutter side before calling this
         }
     }
 }

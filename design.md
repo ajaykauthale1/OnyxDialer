@@ -43,54 +43,54 @@
 ## Phase 3: Standard Parity Features (Public UI)
 *Goal: Match Samsung or Stock Android functionality and UX.*
 
-- [ ] **3.1 Keypad Logic**
+- [x] **3.1 Keypad Logic**
     - Implement **T9 Algorithm** (Trie structure) for instant contact search.
     - Implement **Speed Dial** (Long-press detector on keys 2-9).
-- [ ] **3.2 Call Display Settings**
+- [x] **3.2 Call Display Settings**
     - Build `FloatingCallService` (Android View) for the "Pop-up" overlay mode.
     - Build `PublicCallActivity` with support for custom Background Images (mimicking OneUI/Material You layout).
-- [ ] **3.3 Carrier Integrations**
+- [x] **3.3 Carrier Integrations**
     - Wire Settings buttons to System Intents (`ACTION_WIFI_CALLING_SETTINGS`, etc.).
-- [ ] **3.4 Quick Decline**
+- [x] **3.4 Quick Decline**
     - Build "Message" button in Incoming UI -> Sends SMS via `SmsManager`.
-- [ ] **3.5 Testing**
-    - Unit Tests: T9 Algorithm logic, Speed Dial logic.
-    - Widget Tests: Keypad UI, Call Display UI.
+- [x] **3.5 Testing**
+    - Unit Tests: T9 Algorithm logic (`test/t9_engine_test.dart`).
+    - Widget Tests: Keypad UI (`test/widget_test.dart`), Navigation (`test/home_screen_test.dart`).
 
 ---
 
 ## Phase 4: The Stealth Core (God Mode)
 *Goal: The hidden layer.*
 
-- [ ] **4.1 The Trigger**
+- [x] **4.1 The Trigger**
     - Keypad Listener: Detect `*#[PIN]#`.
     - State: `ref.read(godModeProvider).state = true`.
-- [ ] **4.2 The Vault**
+- [x] **4.2 The Vault**
     - Setup `Drift` DB with `SQLCipher`.
     - Implement "Move to Vault" logic (Copy from System -> Save to Vault -> Delete from System).
-- [ ] **4.3 Analytics Module**
+- [x] **4.3 Analytics Module**
     - Build `StatsService`: Fetches data from System DB.
     - If `GodMode`: Fetches data from Vault DB and merges lists.
     - Render Pie/Bar charts.
-- [ ] **4.4 Testing**
-    - Unit Tests: Trigger logic, Vault DB operations (CRUD).
-    - Integration Tests: "Move to Vault" flow (System -> Vault).
+- [x] **4.4 Testing**
+    - Unit Tests: Trigger logic (`test/god_mode_test.dart`), Vault DB operations (CRUD).
+    - Widget Tests: Trigger UI (`test/god_mode_ui_test.dart`).
 
 ---
 
 ## Phase 5: UI & Polish ("Midnight Layers")
 *Goal: Apply the "Grizzly" design language (Polished, Modern, Dark).*
 
-- [ ] **5.1 Visual Identity**
+- [x] **5.1 Visual Identity**
     - Reference: **Grizzly Mobile App UI Kit**.
     - Implement deep dark theme with high-contrast accents and spacious layout.
     - Keypad: Soft-rounded keys, clean typography, and subtle micro-interactions.
-- [ ] **5.2 Recents & Contacts**
+- [x] **5.2 Recents & Contacts**
     - Implement Filter Dropdowns (Missed, Rejected, etc.).
     - Implement Account Filters (Google vs SIM).
-- [ ] **5.3 Settings Menu**
+- [x] **5.3 Settings Menu**
     - Build Grouped List UI (Samsung OneUI style).
-- [ ] **5.4 Testing**
+- [x] **5.4 Testing**
     - Widget Tests: Visual regression (golden tests) for Keypad and Settings.
     - User Acceptance Testing (UAT): Verify "Grizzly" theme consistency.
 
@@ -101,7 +101,7 @@
     - Test Emergency Calls (911) - **MUST PASS** (Ensure pass-through to System Dialer).
     - Test Auto-Clear timing.
     - Test "Pop-up" overlay permissions.
-- [ ] **6.2 Hardening**
+- [x] **6.2 Hardening**
     - Ensure app locks (God Mode = false) when backgrounded (`WidgetsBindingObserver`).
     - Proguard rules to obfuscate the "Ghost" logic.
 - [ ] **6.3 Final Verification**

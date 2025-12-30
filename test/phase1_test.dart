@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onyxdialer/main.dart';
@@ -25,9 +26,10 @@ void main() {
 
   testWidgets('Phase 1: App Initialization Test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const OnyxDialerApp());
+    // We need to wrap OnyxDialerApp in ProviderScope because it uses Riverpod providers internally (via HomeScreen)
+    await tester.pumpWidget(const ProviderScope(child: OnyxDialerApp()));
 
-    // Verify that the app title is correct.
-    expect(find.text('Onyx Dialer - Phase 1 Initialized'), findsOneWidget);
+    // Verify that the app initializes and shows the Keypad (default home screen)
+    expect(find.text('Keypad'), findsWidgets);
   });
 }

@@ -1,32 +1,27 @@
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 't9_engine.dart';
+import '../ui/keypad/keypad_screen.dart'; // To access t9EngineProvider
 
-final contactServiceProvider = Provider<ContactService>((ref) => ContactService());
-
-class ContactService {
-  Future<bool> requestPermission() async {
-    return await FlutterContacts.requestPermission(readonly: true);
-  }
-
-  Future<List<Contact>> getContacts() async {
-    if (await FlutterContacts.requestPermission(readonly: true)) {
-      return await FlutterContacts.getContacts(withProperties: true, withPhoto: false);
-    }
+final contactListProvider = FutureProvider<List<Contact>>((ref) async {
+  // 1. Request Permission
+  if (!await FlutterContacts.requestPermission(readonly: true)) {
     return [];
   }
 
-  Future<void> loadContactsToT9(T9Engine engine) async {
-    final contacts = await getContacts();
-    for (var contact in contacts) {
-      final name = contact.displayName;
-      if (contact.phones.isNotEmpty) {
-        for (var phone in contact.phones) {
-          // Normalize number (remove spaces, dashes, etc.)
-          final number = phone.number.replaceAll(RegExp(r'[^\d+]'), '');
-          engine.insert(name, number);
-        }
+  // 2. Fetch Contacts (with properties)
+  final contacts = await FlutterContacts.getContacts(withProperties: true);
+
+  // 3. Feed T9 Engine
+  final t9Engine = ref.read(t9EngineProvider);
+  for (var contact in contacts) {
+    if (contact.phones.isNotEmpty) {
+      // Use the first number for simplicity, or iterate all
+      for (var phone in contact.phones) {
+        t9Engine.insert(contact.displayName, phone.number);
       }
     }
   }
-}
+
+  return contacts;
+});
