@@ -1,0 +1,36 @@
+name: onyxdialer
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0-200.1.beta
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # Phase 1.1 Dependencies
+  flutter_riverpod: ^3.1.0
+  drift: ^2.30.0
+  sqlcipher_flutter_libs: ^0.6.8
+  permission_handler: ^12.0.1
+  shared_preferences: ^2.5.4
+  flutter_contacts: ^1.1.9+2
+  url_launcher: ^6.3.2
+  fl_chart: ^1.1.1
+  system_alert_window: ^2.0.7
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  drift_dev: ^2.30.0
+  build_runner: ^2.10.4
+
+flutter:
+  uses-material-design: true
